@@ -5,15 +5,13 @@ from pyspark.sql.types import StructType, StructField, StringType
 spark = SparkSession.builder.appName("PythonListToDataFrame").getOrCreate()
 
 # Define the list
-data = [('John', 'Doe', 25), ('Jane', 'Doe', 30), ('Bob', 'Smith', 35)]
+My_list = ['2020-01-01', '2020-01-02', '2020-01-03']
 
-# Define the schema of the DataFrame
-schema = StructType([StructField("first_name", StringType(), True),
-                     StructField("last_name", StringType(), True),
-                     StructField("age", StringType(), True)])
+# Create a RDD from the list
+rdd = spark.sparkContext.parallelize(My_list)
 
-# Create a DataFrame from the list and schema
-df = spark.createDataFrame(data, schema)
+# Convert the RDD to a DataFrame
+df = rdd.map(lambda x: (x, )).toDF(['date'])
 
 # Show the DataFrame
 df.show()
