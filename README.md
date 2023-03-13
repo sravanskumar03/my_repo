@@ -1,11 +1,12 @@
-from datetime import timedelta, datetime
+from datetime import date, timedelta
 
-# Define start and end dates
-start_date = datetime(2020, 1, 1)
-end_date = datetime(2020, 12, 31)
+start_date = date(2020, 1, 1)
+end_date = date(2020, 1, 31)
 
-# Generate sequence of dates as list
-date_list = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+delta = timedelta(days=1)
+date_list = []
+while start_date <= end_date:
+    date_list.append(start_date.strftime('%m/%d/%Y'))
+    start_date += delta
 
-# Print the list of dates
 print(date_list)
