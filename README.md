@@ -1,15 +1,11 @@
-from pyspark.sql.functions import date_add, expr, to_date
-from pyspark.sql.types import IntegerType
+from datetime import timedelta, datetime
 
 # Define start and end dates
-start_date = "2020-01-01"
-end_date = "2020-12-31"
+start_date = datetime(2020, 1, 1)
+end_date = datetime(2020, 12, 31)
 
-# Calculate number of days between start and end dates
-num_days = expr(f"datediff('{end_date}', '{start_date}') + 1").cast(IntegerType())
+# Generate sequence of dates as list
+date_list = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
 
-# Create DataFrame with date column
-df = spark.range(num_days).withColumn("date", date_add(to_date(start_date), expr("id")))
-
-# Show the first 10 rows of the DataFrame
-df.show(10)
+# Print the list of dates
+print(date_list)
