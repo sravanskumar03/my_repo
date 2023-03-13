@@ -1,12 +1,6 @@
-from datetime import date, timedelta
+from datetime import datetime
 
-start_date = date(2020, 1, 1)
-end_date = date(2020, 1, 31)
+date_string = '2020-01-31'
+date_object = datetime.strptime(date_string, '%Y-%m-%d').date()
 
-delta = timedelta(days=1)
-date_list = []
-while start_date <= end_date:
-    date_list.append(start_date.strftime('%m/%d/%Y'))
-    start_date += delta
-
-print(date_list)
+print(date_object)
