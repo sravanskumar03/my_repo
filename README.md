@@ -1,21 +1,14 @@
-from pyspark.sql.functions import col, to_date, sequence, lit
+from pyspark.sql.functions import array, explode, expr
 
-# Load the input data into a dataframe
-input_df = spark.read.format('csv').load('/path/to/input/file.csv')
+# Define start and end dates
+start_date = "2020-01-01"
+end_date = "2020-12-31"
 
-# Get the minimum and maximum import dates in the dataframe
-min_date = input_df.selectExpr('min(import_dt)').collect()[0][0]
-max_date = input_df.selectExpr('max(import_dt)').collect()[0][0]
+# Create DataFrame with single row containing array of dates
+df = spark.createDataFrame([(array([start_date] + [expr(f"date_add('{start_date}', {i})") for i in range(1, (to_date(end_date) - to_date(start_date)).days + 1)]))], ["date_range"])
 
-# Generate a sequence of dates between the minimum and maximum dates
-date_seq_df = spark.range(min_date, max_date, step=1).select(to_date(col('id')).alias('import_dt'))
+# Explode array of dates into individual rows
+df = df.select(explode("date_range").alias("date"))
 
-# Find the missing dates in the input dataframe
-missing_dates_df = (
-    date_seq_df
-    .join(input_df.select(col('import_dt')), on='import_dt', how='left_anti')
-    .select(col('import_dt').alias('missing_date'))
-)
-
-# Output the missing dates
-missing_dates_df.show()
+# Show the first 10 rows of the DataFrame
+df.show(10)
