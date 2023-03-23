@@ -1,6 +1,3 @@
-from pyspark.sql.functions import count
+from pyspark.sql.functions import col
 
-# Assume df is your DataFrame
-duplicate_count = df.groupBy(df.columns).count().filter("count > 1").count()
-
-print("Number of duplicate records:", duplicate_count)
+df_filtered = df.filter(col("import_date") > "2022-12-22")
