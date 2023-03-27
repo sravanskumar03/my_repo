@@ -1,19 +1,16 @@
-from pyspark.sql.functions import col, array
+# Assume 'df' is the original DataFrame with 433 columns
+# Assume 'duplicate_cols' is a list of columns used for identifying duplicates
+# Assume 'duplicate_row' is a row representing one of the duplicate records
 
-# Select the columns that contain policy details
-policy_cols = [col("col1"), col("col2"), ..., col("col19")]
+from pyspark.sql.functions import col
 
-# Select the columns that contain amount details
-amount_cols = [col("col20"), col("col21"), ..., col("col36")]
+# Create a filter condition for the duplicate record
+filter_condition = col("col1") == duplicate_row[0]  # assuming 'col1' is the first column
+for i in range(1, len(duplicate_cols)):
+    filter_condition &= col(duplicate_cols[i]) == duplicate_row[i]
 
-# Create an array of the policy columns
-policy_array = array(*policy_cols)
-
-# Group the data by the policy columns and get the sum of the amount columns
-df_grouped = df.groupBy(policy_array).agg(*[sum(c).alias(c.name+"_sum") for c in amount_cols])
-
-# Filter out the groups where all the amount columns are the same
-df_filtered = df_grouped.filter(*[(col(c.name+"_sum") != c * len(amount_cols)) for c in amount_cols])
+# Filter the original DataFrame for the duplicate record
+df_filtered = df.filter(filter_condition)
 
 # Show the result
 df_filtered.show()
