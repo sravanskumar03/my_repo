@@ -1,16 +1,9 @@
-# Assume 'df' is the original DataFrame with 433 columns
-# Assume 'duplicate_cols' is a list of columns used for identifying duplicates
-# Assume 'duplicate_row' is a row representing one of the duplicate records
+from pyspark.sql import Row
 
-from pyspark.sql.functions import col
+# Assume 'df' is a DataFrame that we want to convert to row objects
+rows = df.collect()
 
-# Create a filter condition for the duplicate record
-filter_condition = col("col1") == duplicate_row[0]  # assuming 'col1' is the first column
-for i in range(1, len(duplicate_cols)):
-    filter_condition &= col(duplicate_cols[i]) == duplicate_row[i]
+# Convert each row to a row object
+row_objects = [Row(*r) for r in rows]
 
-# Filter the original DataFrame for the duplicate record
-df_filtered = df.filter(filter_condition)
-
-# Show the result
-df_filtered.show()
+# Now 'row_objects' is a list of row objects, where each row object represents a row in the DataFrame 'df'
