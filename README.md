@@ -1,9 +1,7 @@
-from pyspark.sql import Row
+# Assume 'row_object' is a row object that we want to convert to a Python list
+row_dict = row_object.asDict()
 
-# Assume 'df' is a DataFrame that we want to convert to row objects
-rows = df.collect()
+# Convert the dictionary to a list of values
+row_list = list(row_dict.values())
 
-# Convert each row to a row object
-row_objects = [Row(*r) for r in rows]
-
-# Now 'row_objects' is a list of row objects, where each row object represents a row in the DataFrame 'df'
+# Now 'row_list' is a Python list containing the values of the columns in 'row_object'
