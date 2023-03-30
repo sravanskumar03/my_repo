@@ -1,17 +1,12 @@
-from pyspark.sql import SparkSession
 from multiprocessing.pool import ThreadPool
-
-# Create a SparkSession
-spark = SparkSession.builder.appName("S3 File Copy").getOrCreate()
 
 # Source and destination S3 paths
 src_s3_path = "s3://my-source-bucket/path/to/files/"
 dst_s3_path = "s3://my-destination-bucket/path/to/files/"
 
-# Function to copy files using the S3 command line tool
+# Function to copy files using dbutils.fs.cp
 def copy_file(src_path, dst_path):
-    cmd = "aws s3 cp {} {}".format(src_path, dst_path)
-    os.system(cmd)
+    dbutils.fs.cp(src_path, dst_path)
 
 # Function to copy files in parallel using multiprocessing
 def parallel_copy_file(src_file_path):
@@ -25,8 +20,8 @@ def parallel_copy_file(src_file_path):
     pool.join()
 
 # Get a list of all files in the source S3 path
-s3_files = spark.read.text(src_s3_path).rdd.map(lambda r: r[0]).collect()
+s3_files = [obj.key for obj in dbutils.fs.ls(src_s3_path)]
 
 # Copy files in parallel
 for s3_file in s3_files:
-    parallel_copy_file(s3_file)
+    parallel_copy_file(s3_file.path)
