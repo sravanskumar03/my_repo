@@ -1,8 +1,4 @@
-import boto3
 
-s3 = boto3.resource('s3')
-bucket = s3.Bucket('your-bucket')
-prefix = 'your-prefix/'
-
-result = [o.key for o in bucket.objects.filter(Prefix=prefix) if o.key.endswith('/')]
+s3_path = "s3a://your-bucket/your-prefix/"
+result = [file.name for file in dbutils.fs.ls(s3_path)]
 print(result)
