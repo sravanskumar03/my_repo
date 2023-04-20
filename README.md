@@ -17,7 +17,14 @@ def get_size_s3(s3_path):
         sizes[folder_name] += obj.size
     return sizes
 
-s3_path = "s3://your-bucket/your-prefix/"
-sizes = get_size_s3(s3_path)
-for folder_name, size in sizes.items():
+def get_folder_size(folder_name):
+    s3_path = f"s3://your-bucket/your-prefix/{folder_name}/"
+    sizes = get_size_s3(s3_path)
+    return (folder_name, sizes[folder_name])
+
+folders = ["folder1", "folder2", "folder3"]
+folder_sizes_rdd = sc.parallelize(folders).map(get_folder_size)
+folder_sizes = folder_sizes_rdd.collect()
+
+for folder_name, size in folder_sizes:
     print(f"Size of data in {folder_name}: {size} bytes")
