@@ -1,6 +1,7 @@
 
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, LongType
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DateType
+from pyspark.sql.functions import current_date
 import boto3
 
 # create a spark session
@@ -33,5 +34,8 @@ schema = StructType([
 ])
 df = spark.createDataFrame(folder_sizes, schema)
 
+# add the current date to the DataFrame
+df = df.withColumn('Date', current_date())
+
 # show the result
-df.display()
+df.show()
