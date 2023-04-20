@@ -1,6 +1,7 @@
 
 from pyspark.sql import SparkSession
 import boto3
+from collections import defaultdict
 
 def get_size_s3(s3_path):
     spark = SparkSession.builder.appName("S3Size").getOrCreate()
@@ -9,11 +10,13 @@ def get_size_s3(s3_path):
     bucket_name = s3_path.split('/')[2]
     prefix = '/'.join(s3_path.split('/')[3:])
     bucket = s3.Bucket(bucket_name)
-    total_size = 0
+    sizes = defaultdict(int)
     for obj in bucket.objects.filter(Prefix=prefix):
-        total_size += obj.size
-    return total_size
+        folder_name = obj.key.split('/')[0]
+        sizes[folder_name] += obj.size
+    return sizes
 
 s3_path = "s3://your-bucket/your-prefix/"
-total_size = get_size_s3(s3_path)
-print(f"Total size of data in {s3_path}: {total_size} bytes")
+sizes = get_size_s3(s3_path)
+for folder_name, size in sizes.items():
+    print(f"Size of data in {folder_name}: {size} bytes")
