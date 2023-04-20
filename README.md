@@ -1,41 +1,19 @@
 
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, LongType, DateType
-from pyspark.sql.functions import current_date
 import boto3
 
-# create a spark session
-spark = SparkSession.builder.appName("S3FolderDataSizeDF").getOrCreate()
+def get_size_s3(s3_path):
+    spark = SparkSession.builder.appName("S3Size").getOrCreate()
+    sc = spark.sparkContext
+    s3 = boto3.resource('s3')
+    bucket_name = s3_path.split('/')[2]
+    prefix = '/'.join(s3_path.split('/')[3:])
+    bucket = s3.Bucket(bucket_name)
+    total_size = 0
+    for obj in bucket.objects.filter(Prefix=prefix):
+        total_size += obj.size
+    return total_size
 
-# set up the S3 client
-s3 = boto3.client('s3')
-
-# specify the bucket and prefix (folder) for the data
-bucket = 'your-bucket-name'
-prefix = 'your-prefix'
-
-# get the list of objects in the specified location
-response = s3.list_objects_v2(Bucket=bucket, Prefix=prefix, Delimiter='/')
-
-# get the list of folder names
-folders = [folder['Prefix'] for folder in response['CommonPrefixes']]
-
-# calculate the size of data in each folder
-folder_sizes = []
-for folder in folders:
-    response = s3.list_objects_v2(Bucket=bucket, Prefix=folder)
-    total_size = sum(obj['Size'] for obj in response['Contents'])
-    folder_sizes.append((folder, total_size))
-
-# create a DataFrame from the data
-schema = StructType([
-    StructField('Folder', StringType(), True),
-    StructField('Size', LongType(), True)
-])
-df = spark.createDataFrame(folder_sizes, schema)
-
-# add the current date to the DataFrame
-df = df.withColumn('Date', current_date())
-
-# show the result
-df.show()
+s3_path = "s3://your-bucket/your-prefix/"
+total_size = get_size_s3(s3_path)
+print(f"Total size of data in {s3_path}: {total_size} bytes")
