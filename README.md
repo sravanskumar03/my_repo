@@ -3,10 +3,11 @@ from pyspark.sql import SparkSession
 import boto3
 from collections import defaultdict
 
+spark = SparkSession.builder.appName("S3Size").getOrCreate()
+sc = spark.sparkContext
+s3 = boto3.resource('s3')
+
 def get_size_s3(s3_path):
-    spark = SparkSession.builder.appName("S3Size").getOrCreate()
-    sc = spark.sparkContext
-    s3 = boto3.resource('s3')
     bucket_name = s3_path.split('/')[2]
     prefix = '/'.join(s3_path.split('/')[3:])
     bucket = s3.Bucket(bucket_name)
