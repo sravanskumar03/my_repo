@@ -1,33 +1,20 @@
-Here is an example of how to write a JSON object containing 5 S3 paths to a file, read the file, and convert the JSON object into a list of S3 paths using PySpark and the `json` module in Databricks:
+Here is an example of how you can read a .txt file containing 5 S3 paths from an S3 path and create a list of the given 5 S3 paths in the txt file using PySpark in Databricks:
 
 ```python
-from pyspark.sql import SparkSession
-import json
+from pyspark import SparkFiles
 
-spark = SparkSession.builder.appName("Read JSON").getOrCreate()
+# Replace with your S3 path to the .txt file
+s3_path = "s3a://your-bucket/your-file.txt"
 
-# Write JSON data to a file
-data = {
-    "s3_paths": [
-        "s3://my-bucket/path1",
-        "s3://my-bucket/path2",
-        "s3://my-bucket/path3",
-        "s3://my-bucket/path4",
-        "s3://my-bucket/path5"
-    ]
-}
+# Add the .txt file to Spark context
+sc.addFile(s3_path)
 
-with open("/tmp/data.json", "w") as f:
-    json.dump(data, f)
+# Read the .txt file and create a list of S3 paths
+with open(SparkFiles.get("your-file.txt")) as f:
+    s3_paths = [line.strip() for line in f.readlines()]
 
-# Read JSON data from the file
-with open("/tmp/data.json", "r") as f:
-    data = json.load(f)
-
-# Convert JSON data into a list of S3 paths
-s3_paths = data["s3_paths"]
-
+# Now you have a list of S3 paths
 print(s3_paths)
 ```
 
-This code writes a JSON object containing 5 S3 paths to a file using the `json.dump()` method. Then, it reads the JSON data from the file using the `json.load()` method and converts it into a Python dictionary. Finally, it extracts the list of S3 paths from the dictionary. Is this what you were looking for?
+Make sure to replace `s3a://your-bucket/your-file.txt` with your actual S3 path to the .txt file and `your-file.txt` with the name of your .txt file. Does this help?
