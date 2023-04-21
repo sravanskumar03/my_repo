@@ -1,26 +1,41 @@
-Here's an updated version of the code that uses the `multiprocessing` module to process the data in parallel using multiple processes:
+Here's an example of how you can do that in PySpark:
 
 ```python
-from pyspark.sql import SparkSession
-from datetime import datetime
-import multiprocessing
+from pyspark import SparkConf, SparkContext
+from pyspark.sql import SQLContext
+import json
 
-def process_data(import_date):
-    spark = SparkSession.builder.appName("ProcessData").getOrCreate()
-    query = f"SELECT * FROM your_table_name WHERE import_date = '{import_date}'"
-    df = spark.sql(query)
-    df.write.parquet(f"s3://your_bucket/your_prefix/{import_date}")
+conf = SparkConf().setAppName("Read JSON")
+sc = SparkContext.getOrCreate(conf)
+sqlContext = SQLContext(sc)
 
-if __name__ == "__main__":
-    start_year = 2019
-    current_year = datetime.now().year
-    years = [str(year) for year in range(start_year, current_year + 1)]
-    pool = multiprocessing.Pool()
-    pool.map(process_data, years)
-    pool.close()
-    pool.join()
+# Load JSON file from S3 into a DataFrame
+df = sqlContext.read.json("s3a://your-bucket/your-file.json")
+
+# Convert DataFrame to JSON string
+json_str = df.toJSON().first()
+
+# Load JSON string into a Python dictionary
+data = json.loads(json_str)
+
+# Get the list of S3 paths from the dictionary
+s3_paths = data['s3_paths']
+
+print(s3_paths)
 ```
 
-This code uses the `Pool` class from the `multiprocessing` module to create a pool of worker processes. The `map` method is then used to apply the `process_data` function to each year in parallel. This should speed up the processing of the data.
+This code assumes that your JSON file has the following format:
 
-Is there anything else you would like me to help with?
+```json
+{
+    "s3_paths": [
+        "s3a://your-bucket/path1",
+        "s3a://your-bucket/path2",
+        "s3a://your-bucket/path3",
+        "s3a://your-bucket/path4",
+        "s3a://your-bucket/path5"
+    ]
+}
+```
+
+Is this what you were looking for? Let me know if you have any questions or need further clarification. 😊
