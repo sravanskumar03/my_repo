@@ -1,4 +1,4 @@
-Here's an updated version of the code that uses the `concurrent.futures` module to process the data in parallel using multiple processes:
+Here's an updated version of the code that reads data from a table using a predefined SELECT query stored in a string:
 
 ```python
 from pyspark.sql import SparkSession
@@ -7,7 +7,8 @@ import concurrent.futures
 
 def process_data(import_date):
     spark = SparkSession.builder.appName("ProcessData").getOrCreate()
-    df = spark.read.table("your_table_name").filter(f"import_date = '{import_date}'")
+    query = f"SELECT * FROM your_table_name WHERE import_date = '{import_date}'"
+    df = spark.sql(query)
     df.write.parquet(f"s3://your_bucket/your_prefix/{import_date}")
 
 if __name__ == "__main__":
@@ -18,6 +19,6 @@ if __name__ == "__main__":
         executor.map(process_data, years)
 ```
 
-This code uses the `ProcessPoolExecutor` class to create a pool of worker processes. The `map` method is then used to apply the `process_data` function to each year in parallel. This should speed up the processing of the data.
+This code creates a SELECT query string that filters the data based on the `import_date` parameter. The `spark.sql` method is then used to execute the query and create a DataFrame from the result. The rest of the code remains unchanged.
 
 Is there anything else you would like me to help with?
