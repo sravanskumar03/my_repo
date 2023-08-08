@@ -1,9 +1,3 @@
-from pyspark.sql.functions import udf
+import pyspark.sql.functions as F
 
-def ascii_ignore(x):
-    return x.encode('ascii', 'ignore').decode('ascii')
-
-ascii_udf = udf(ascii_ignore)
-
-for col in df.columns:
-    df = df.withColumn(col, ascii_udf(col))
+df = df.select([F.regexp_replace(F.col(c), '[^a-zA-Z0-9]', '').alias(c) for c in df.columns])
