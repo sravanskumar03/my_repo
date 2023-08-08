@@ -1,3 +1,8 @@
-SELECT REPLACE(column_name COLLATE SQL_Latin1_General_CP1251_CS_AS, CHAR(0x0D), '')
-FROM table_name
-WHERE column_name LIKE '%[^ -~]%' ESCAPE '|';
+from pyspark.sql.functions import udf
+
+def ascii_ignore(x):
+    return x.encode('ascii', 'ignore').decode('ascii')
+
+ascii_udf = udf(ascii_ignore)
+
+df = df.withColumn("new_column", ascii_udf("old_column"))
