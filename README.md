@@ -5,4 +5,5 @@ def ascii_ignore(x):
 
 ascii_udf = udf(ascii_ignore)
 
-df = df.withColumn("new_column", ascii_udf("old_column"))
+for col in df.columns:
+    df = df.withColumn(col, ascii_udf(col))
