@@ -1,3 +1,3 @@
-There are several alternatives to Teradata such as Amazon Redshift, Google BigQuery, Snowflake, Microsoft Azure Synapse Analytics, IBM Netezza Analytics and Oracle Exadata. These are all cloud-based data warehousing solutions that offer similar functionalities to Teradata.
-
-I hope this helps you. Let me know if you have any other questions.
+SELECT REPLACE(column_name COLLATE SQL_Latin1_General_CP1251_CS_AS, CHAR(0x0D), '')
+FROM table_name
+WHERE column_name LIKE '%[^ -~]%' ESCAPE '|';
