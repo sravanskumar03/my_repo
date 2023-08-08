@@ -1,3 +1,4 @@
-import pyspark.sql.functions as F
+import re
 
-df = df.select([F.regexp_replace(F.col(c), '[^a-zA-Z0-9]', '').alias(c) for c in df.columns])
+for col in df.columns:
+    df = df.withColumn(col, regexp_replace(df[col], '[^\x00-\x7F]+', ''))
