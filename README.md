@@ -1,8 +1,6 @@
-from pyspark.sql.functions import udf
+from pyspark.sql.functions import col, regexp_replace
 
-def ascii_ignore(x):
-    return x.encode('ascii', 'ignore').decode('ascii')
-
-ascii_udf = udf(ascii_ignore)
-
-df = df.select([ascii_udf(column).alias(column) for column in df.columns])
+def remove_non_ascii(df):
+    for column in df.columns:
+        df = df.withColumn(column, regexp_replace(col(column), '[^ -~]', ''))
+    return df
