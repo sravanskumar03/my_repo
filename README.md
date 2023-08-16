@@ -1,8 +1,11 @@
-from pyspark.sql.functions import split, sort_array, concat_ws
-
-def update_column(df, column_to_update):
-    df2 = df.withColumn(
-        column_to_update,
-        concat_ws(",", sort_array(split(column_to_update, ";")))
-    )
-    return df2
+SELECT 
+    "I'd",
+    regexp_replace(
+        regexp_replace(
+            regexp_replace("lnoi vist.values", 'auto', 'au'), 
+            'prop', 'pr'
+        ),
+        'pf', 'pf'
+    ) AS "lnoi vist.values"
+FROM your_table_name
+WHERE "I'd" = 1;
