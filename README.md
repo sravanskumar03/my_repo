@@ -1,10 +1,10 @@
-from pyspark.sql.functions import split, size
+from pyspark.sql.functions import split, concat_ws
 
-def transform_string_col(df, string_col_name):
-    # transform string column into array column
-    df = df.withColumn("array_col", split(df[string_col_name], ","))
-    
-    # add new column with length of array
-    df = df.withColumn("array_length", size(df["array_col"]))
-    
-    return df
+def reverse_name(name):
+    return concat_ws(", ", split(name, " ")[1], split(name, " ")[0])
+
+df = spark.createDataFrame([(1, "angel de Maria"), (2, "lionel messi")], ["id", "name"])
+
+df = df.withColumn("name", reverse_name(df.name))
+
+df.show()
