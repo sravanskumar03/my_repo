@@ -1,5 +1,4 @@
-import pyspark.sql.functions as F
-from pyspark.sql import DataFrame
+from pyspark.sql.functions import array_remove
 
-def remove_one_letter_initials(df: DataFrame, col_name: str) -> DataFrame:
-    return df.withColumn(col_name, F.regexp_replace(F.col(col_name), r'\b\w\b', ''))
+def remove_elements_from_array_column(df, column_name, elements_to_remove):
+    return df.withColumn(column_name, array_remove(column_name, *elements_to_remove))
