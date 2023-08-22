@@ -1,10 +1,4 @@
-from pyspark.sql.functions import split, concat_ws
+from pyspark.sql.functions import when, length
 
-def reverse_name(name):
-    return concat_ws(", ", split(name, " ")[1], split(name, " ")[0])
-
-df = spark.createDataFrame([(1, "angel de Maria"), (2, "lionel messi")], ["id", "name"])
-
-df = df.withColumn("name", reverse_name(df.name))
-
-df.show()
+def remove_initials(df, column_name):
+    return df.withColumn(column_name, when(length(column_name.split()[-1]) == 2, column_name[:-2]).otherwise(column_name))
