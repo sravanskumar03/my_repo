@@ -1,23 +1,14 @@
-from pyspark.sql.functions import size
+Here's a professional rewrite of your email message:
 
-df = spark.createDataFrame([(1, ["foo", "bar"]), (2, ["baz"]), (3, [])], ["id", "value"])
-df.show()
+Hi xx,
 
-+---+--------+
-| id|   value|
-+---+--------+
-|  1|[foo,bar]|
-|  2|    [baz]|
-|  3|      []|
-+---+--------+
+I hope this email finds you well. I am writing to inform you that the updated xx testcase excel sheet has been uploaded to the sharepoint. Additionally, we have included the queries used for each test case.
 
-df = df.withColumn("size", size(df.value))
-df.show()
+Please note that these queries can be run on Athena in the AWS account mentioned below:
 
-+---+--------+----+
-| id|   value|size|
-+---+--------+----+
-|  1|[foo,bar]|   2|
-|  2|    [baz]|   1|
-|  3|      []|   0|
-+---+--------+----+
+[Account Name]
+
+If you have any questions or concerns, please do not hesitate to reach out to me.
+
+Best regards,
+[Your Name]
