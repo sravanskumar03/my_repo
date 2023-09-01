@@ -1,4 +1,13 @@
-from pyspark.sql.functions import trim
+from pyspark.sql import SparkSession
 
-df = spark.read.format("csv").option("header", "true").load("path/to/csv/file")
-df = df.select([trim(column).alias(column) for column in df.columns])
+# Create a SparkSession
+spark = SparkSession.builder.appName("CustomDelimitedTextFile").getOrCreate()
+
+# Define the schema of the DataFrame
+schema = "column1 STRING, column2 INT, column3 DOUBLE"
+
+# Read the text file and create a DataFrame
+df = spark.read.format("csv").option("delimiter", "<custom_delimiter>").schema(schema).load("<path_to_text_file>")
+
+# Show the DataFrame
+df.show()
