@@ -1,10 +1,18 @@
 import boto3
 
-sns_client = boto3.client('sns')
+ses_client = boto3.client('ses')
 
-response = sns_client.publish(
-    TopicArn='your-topic-arn',
-    Message='''<html>
+response = ses_client.send_email(
+    Destination={
+        'ToAddresses': [
+            'recipient@example.com',
+        ],
+    },
+    Message={
+        'Body': {
+            'Html': {
+                'Charset': 'UTF-8',
+                'Data': '''<html>
 <head>
 <style>
 table, th, td {
@@ -36,7 +44,14 @@ th, td {
 </table>
 </body>
 </html>''',
-    Subject='HTML Table Example'
+            },
+        },
+        'Subject': {
+            'Charset': 'UTF-8',
+            'Data': 'HTML Table Example',
+        },
+    },
+    Source='sender@example.com',
 )
 
 print(response)
