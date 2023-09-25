@@ -1,57 +1,9 @@
-import boto3
+DECLARE @tbl TABLE (YourString VARCHAR (100));
+INSERT INTO @tbl VALUES ('Pillars 101 in an apartment'), ('Zuzu Durga International Hotel'), ('Wyndham Garden Fresh Meadows');
 
-ses_client = boto3.client('ses')
-
-response = ses_client.send_email(
-    Destination={
-        'ToAddresses': [
-            'recipient@example.com',
-        ],
-    },
-    Message={
-        'Body': {
-            'Html': {
-                'Charset': 'UTF-8',
-                'Data': '''<html>
-<head>
-<style>
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-th, td {
-  padding: 5px;
-}
-</style>
-</head>
-<body>
-<table style="width:100%">
-  <tr>
-    <th>Firstname</th>
-    <th>Lastname</th> 
-    <th>Age</th>
-  </tr>
-  <tr>
-    <td>John</td>
-    <td>Doe</td>
-    <td>30</td>
-  </tr>
-  <tr>
-    <td>Jane</td>
-    <td>Doe</td>
-    <td>25</td>
-  </tr>
-</table>
-</body>
-</html>''',
-            },
-        },
-        'Subject': {
-            'Charset': 'UTF-8',
-            'Data': 'HTML Table Example',
-        },
-    },
-    Source='sender@example.com',
-)
-
-print(response)
+SELECT CAST ('<x>' + REPLACE ((SELECT YourString AS [*] FOR XML PATH('')), ' ', '</x><x>') + '</x>' AS XML).query('
+  for $x in /x
+  order by $x
+  return concat($x/text()[1], " ")
+').value('.', 'varchar(max)')
+FROM @tbl;
