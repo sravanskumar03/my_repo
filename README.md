@@ -1,3 +1,2 @@
-SELECT entity, value
-FROM your_table t1
-CROSS APPLY dbo.SplitString(t1.value, ';') s;
+SELECT '["' + REPLACE(your_column, ';', '","') + '"]' AS your_column_array
+FROM your_table
