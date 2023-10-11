@@ -1,9 +1,4 @@
-from pyspark.sql import SparkSession
+from pyspark.sql.functions import input_file_name
 
-spark = SparkSession.builder.appName("SearchFile").getOrCreate()
-
-s3_bucket_path = "s3a://<bucket_name>"
-
-df = spark.read.format("csv").option("header", "true").load(s3_bucket_path + "/**/000567*")
-
-df.selectExpr("input_file_name()").show(truncate=False)
+df = spark.read.json("s3://your-bucket-name/your-folder-name/")
+df.withColumn("filename", input_file_name()).filter(col("filename").contains("00567")).select("filename").show()
