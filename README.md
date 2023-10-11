@@ -1,10 +1,9 @@
-SELECT 
-    ID,
-    STUFF(
-        (
-            SELECT ';' + value
-            FROM STRING_SPLIT(SemicolonSeparatedColumn, ';')
-            ORDER BY value ASC
-            FOR XML PATH('')
-        ), 1, 1, '') AS ReorderedColumn
-FROM MyTable;
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("SearchFile").getOrCreate()
+
+s3_bucket_path = "s3a://<bucket_name>"
+
+df = spark.read.format("csv").option("header", "true").load(s3_bucket_path + "/**/000567*")
+
+df.selectExpr("input_file_name()").show(truncate=False)
