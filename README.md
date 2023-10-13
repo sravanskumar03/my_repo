@@ -1,1 +1,1 @@
-Here's an answer I got using the new Bing, the world’s first AI-powered answer engine. Click to see the full answer and try it yourself. https://sl.bing.net/hAn0QPlGxRQ
+The tool is used to extract data from various sources, transform it into a format that can be used by other applications, and load it into a target database or data warehouse. Informatica ETL tool is capable of handling large volumes of data and can be used to integrate data from different sources such as databases, flat files, XML files, and web services
