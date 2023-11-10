@@ -11,6 +11,6 @@ def get_all_mondays(year):
     d += datetime.timedelta(days_to_monday)
     mondays = []
     while d.year == year:
-        mondays.append(d)
+        mondays.append(d.strftime('%Y-%m-%d'))
         d += datetime.timedelta(days=7)
     return mondays
