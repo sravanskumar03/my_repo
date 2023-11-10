@@ -1,16 +1,11 @@
 import datetime
 
-def get_all_mondays(year):
-    """
-    Returns a list of all Mondays in the given year.
-    """
-    d = datetime.date(year, 1, 1)
-    days_to_monday = 7 - d.weekday()
-    if days_to_monday == 7:
-        days_to_monday = 0
-    d += datetime.timedelta(days_to_monday)
-    mondays = []
-    while d.year == year:
-        mondays.append(d.strftime('%Y-%m-%d'))
-        d += datetime.timedelta(days=7)
-    return mondays
+def get_month_end_dates():
+    today = datetime.date.today()
+    end_of_month = datetime.date(today.year, today.month, 1) + datetime.timedelta(days=32)
+    end_of_month = end_of_month.replace(day=1) - datetime.timedelta(days=1)
+    month_end_dates = []
+    while end_of_month >= today:
+        month_end_dates.append(end_of_month)
+        end_of_month -= datetime.timedelta(days=1)
+    return month_end_dates
