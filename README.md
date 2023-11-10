@@ -1,6 +1,16 @@
-from pyspark.sql.functions import expr, sequence, to_date
+import datetime
 
-df = spark.range(0, (date.today() - date(2021, 1, 1)).days + 1, 1)
-df = df.withColumn('date', expr("date_add('2021-01-01', id)"))
-
-df.show()
+def get_all_mondays(year):
+    """
+    Returns a list of all Mondays in the given year.
+    """
+    d = datetime.date(year, 1, 1)
+    days_to_monday = 7 - d.weekday()
+    if days_to_monday == 7:
+        days_to_monday = 0
+    d += datetime.timedelta(days_to_monday)
+    mondays = []
+    while d.year == year:
+        mondays.append(d)
+        d += datetime.timedelta(days=7)
+    return mondays
