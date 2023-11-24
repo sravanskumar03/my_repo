@@ -1,8 +1,8 @@
-I apologize for the oversight. It seems there was a mistake in the code. Let me correct that for you:
+I apologize for the confusion. It seems I overlooked the correction in my previous response. Let me provide you with the corrected code:
 
 ```python
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, count
 
 def find_duplicates_in_partitions(s3_path):
     # Create a Spark session
@@ -14,11 +14,11 @@ def find_duplicates_in_partitions(s3_path):
     # Identify row-level duplicates within each import_dt partition
     partitioned_duplicates_df = (
         input_df
-        .groupBy("import_dt", input_df.columns)
-        .count()
+        .groupBy("import_dt", *input_df.columns)
+        .agg(count("*").alias("count"))
         .filter(col("count") > 1)
         .groupBy("import_dt")
-        .agg(collect_list("count").alias("no_of_row_level_duplicates"))
+        .agg(count("*").alias("no_of_row_level_duplicates"))
     )
 
     return partitioned_duplicates_df
@@ -29,4 +29,4 @@ result_df = find_duplicates_in_partitions(s3_table_path)
 result_df.show()
 ```
 
-This correction includes using `collect_list` to aggregate the count of row-level duplicates within each import_dt partition. Please try this updated code, and it should resolve the issue you encountered.
+This code uses `count("*")` to aggregate the count of row-level duplicates within each import_dt partition. Please try this corrected code, and it should work as expected.
