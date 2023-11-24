@@ -1,25 +1,33 @@
-Certainly! Considering that your table is partitioned based on the import date column, we need to take advantage of this partitioning for a more efficient query. Here's a PySpark function that addresses your requirements:
+Certainly! Based on your sample scenario, here's a PySpark function that takes an S3 path as input, checks for row-level duplicates in each parquet file stored in S3, and returns a DataFrame containing import_dt partition files with row-level duplicates:
 
 ```python
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 
-def find_partitioned_duplicates(input_table):
+def find_duplicates_in_partitions(s3_path):
     # Create a Spark session
-    spark = SparkSession.builder.appName("PartitionedDuplicates").getOrCreate()
+    spark = SparkSession.builder.appName("S3PartitionedDuplicates").getOrCreate()
 
-    # Read the parquet file into a DataFrame
-    input_df = spark.read.parquet(input_table)
+    # Read the parquet files from the S3 path
+    input_df = spark.read.parquet(s3_path)
 
-    # Identify duplicates within each partition (import_date)
-    partitioned_duplicates_df = input_df.groupBy("import_date").count().filter(col("count") > 1)
+    # Identify row-level duplicates within each import_dt partition
+    partitioned_duplicates_df = (
+        input_df
+        .groupBy("import_dt", input_df.columns)
+        .count()
+        .filter(col("count") > 1)
+        .groupBy("import_dt")
+        .agg({"count": "count"})
+        .withColumnRenamed("count", "no_of_row_level_duplicates")
+    )
 
     return partitioned_duplicates_df
 
 # Example usage:
-table_path = "path/to/your/parquet/table"
-result_df = find_partitioned_duplicates(table_path)
+s3_table_path = "s3://your-bucket/your-path"
+result_df = find_duplicates_in_partitions(s3_table_path)
 result_df.show()
 ```
 
-Replace `"path/to/your/parquet/table"` with the actual path to your parquet table. This code leverages the partitioning to identify duplicates within each import_date partition. The resulting DataFrame will contain import dates and the count of row-level duplicates within each partition.
+Replace `"s3://your-bucket/your-path"` with the actual S3 path to your parquet table. This code efficiently identifies row-level duplicates within each import_dt partition, providing a DataFrame containing import_dt and the count of row-level duplicates for each partition file.
