@@ -1,3 +1,7 @@
-SELECT definition
-FROM sys.sql_modules
-WHERE object_id = OBJECT_ID('YourViewName');
+SELECT 
+    COLUMN_NAME,
+    DATA_TYPE
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = 'YourViewName';
