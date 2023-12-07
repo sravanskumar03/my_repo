@@ -1,7 +1,1 @@
-SELECT 
-    COLUMN_NAME,
-    DATA_TYPE
-FROM 
-    INFORMATION_SCHEMA.COLUMNS
-WHERE 
-    TABLE_NAME = 'YourViewName';
+I hope this message finds you well. Upon reviewing the records in the Athena table and Snowflake for the rating common view, it has come to our attention that there is missing data in the Snowflake table. This discrepancy is attributed to a production glitch that occurred during the loading of the Snowflake table for the rating common view on 2023-05-12.It's worth noting that the account details (sai_nbr) shared in this email chain were not affected by the missing data on 2023-05-12.Additionally, there seems to be uncertainty regarding the columns to be utilized in the Total Insured Values (TIV) calculation. The TIV formula is as follows:[TIV = \text{Build Limits} + \text{Contents Limits} + \text{Business Income Insurance}]To address this, I have attached a document containing all the records mentioned in the account information within the common view table. This document should provide clarity on the columns to be used in the TIV calculation.Your prompt attention to this matter is highly appreciated.Best regards,
