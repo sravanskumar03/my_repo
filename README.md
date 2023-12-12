@@ -1,4 +1,4 @@
-Certainly! If you can't use `spark.read.format("xml")`, you can manually read the XML files from S3 using `spark.read.text` and then process them. Here's an alternative approach:
+Apologies for the oversight. It seems there's an issue with the `groupBy` operation when concatenating XML content. Let's modify the code to address this:
 
 ```python
 from pyspark.sql import SparkSession
@@ -15,7 +15,7 @@ output_path = "s3://your-output-path/single.xml.bz2"
 xml_df = spark.read.text(input_path)
 
 # Concatenate XML content into a single column
-concatenated_xml = xml_df.groupBy().agg(concat_ws("", xml_df.value).alias("xml_content"))
+concatenated_xml = xml_df.agg(concat_ws("", xml_df.value).alias("xml_content"))
 
 # Write concatenated XML content to a temporary local file
 temp_local_path = "/tmp/temp.xml"
@@ -33,4 +33,4 @@ spark.read.text("file:" + temp_local_path + ".bz2").write.text(output_path, comp
 spark.sparkContext.clearFiles()
 ```
 
-This alternative code reads the XML files into a DataFrame, concatenates the XML content, writes it to a temporary local file, compresses it with bz2, and uploads it to the specified S3 output path. Adjust the script according to your XML structure and requirements.
+This modification removes the unnecessary `groupBy` and directly uses `agg` to concatenate the XML content into a single column. Please try this updated code, and it should address the error you encountered.
