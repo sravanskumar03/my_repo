@@ -1,4 +1,14 @@
-Certainly! To achieve this in Databricks using Python, you can use the following code snippet. Make sure you have the necessary permissions to read from S3 and write to S3.
+It seems like there's an issue with missing dependencies related to the XML data source in PySpark. You can try adding the necessary package explicitly by including it in your Databricks notebook or script.
+
+Before reading XML files, add the following line to include the necessary package:
+
+```python
+spark.conf.set("spark.jars.packages", "com.databricks:spark-xml_2.12:0.13.0")
+```
+
+This line specifies the XML data source package version compatible with your Spark version.
+
+Here's the modified code:
 
 ```python
 from pyspark.sql import SparkSession
@@ -7,6 +17,9 @@ import bz2
 
 # Initialize Spark session
 spark = SparkSession.builder.appName("XMLMerge").getOrCreate()
+
+# Add XML data source package
+spark.conf.set("spark.jars.packages", "com.databricks:spark-xml_2.12:0.13.0")
 
 # Specify your S3 paths
 input_path = "s3://your-input-path/*.xml"
@@ -18,7 +31,7 @@ df = spark.read.format("xml").option("rowTag", "your_row_tag").load(input_path)
 # Convert DataFrame to XML string
 xml_string = df.toXML()
 
-# Write the XML string to a bz2-compressed file
+# Write the XML string to a bz2-compressed file on S3
 with bz2.BZ2File(output_path, 'wb') as f:
     f.write(xml_string.encode())
 
@@ -26,8 +39,4 @@ with bz2.BZ2File(output_path, 'wb') as f:
 spark.stop()
 ```
 
-Replace `"s3://your-input-path/*.xml"` with the actual path where your XML files are located, and `"s3://your-output-path/merged.xml.bz2"` with the desired output path and file name.
-
-Ensure that you've configured your Databricks environment to access S3, and the necessary dependencies are available.
-
-This code uses the `pyspark.sql` module to read XML files into a DataFrame, converts the DataFrame to an XML string, and then writes the compressed XML string to a bz2 file using the `bz2` module. Adjust the `"your_row_tag"` parameter in the `rowTag` option to the specific XML tag you want to use for each row.
+Remember to replace `"your-input-path/*.xml"` and `"your-output-path/merged.xml.bz2"` with your actual S3 paths. This should resolve the issue related to the missing XML data source.
