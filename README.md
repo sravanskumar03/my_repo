@@ -1,4 +1,4 @@
-Certainly! You can achieve this by iterating over the list of table names, reading each table, finding the maximum `import_dt` value, and counting the records with that maximum value. Here's a sample PySpark function to accomplish this:
+It seems there's an issue with the column name `import_dt` in the error message. It looks like there might be a space or typo in the column name. I'll adjust the code to handle potential column name variations. Try the updated code below:
 
 ```python
 from pyspark.sql import SparkSession
@@ -14,9 +14,11 @@ def max_import_dt_per_table(table_names):
             df = spark.read.table(table_name)
 
             # Check if import_dt column exists in the DataFrame
-            if 'import_dt' in df.columns:
+            import_dt_column = next((col_name for col_name in df.columns if col_name.lower() == 'import_dt'), None)
+
+            if import_dt_column:
                 # Find the max import_dt and count of records with that value
-                max_import_dt_row = df.groupBy().agg(max("import_dt").alias("max_import_dt"), col("import_dt").isNotNull().alias("count_max_import_dt"))
+                max_import_dt_row = df.groupBy().agg(max(import_dt_column).alias("max_import_dt"), col(import_dt_column).isNotNull().alias("count_max_import_dt"))
                 max_import_dt_value = max_import_dt_row.select("max_import_dt").collect()[0][0]
                 count_max_import_dt = max_import_dt_row.select("count_max_import_dt").collect()[0][0]
 
@@ -36,9 +38,9 @@ def max_import_dt_per_table(table_names):
     return result_df
 
 # Example usage
-table_names = ["table1", "table2", "table3"]  # Replace with your actual table names
+table_names = ["glu_bi_preissu.webpd.t_cobusinessinfo"]  # Replace with your actual table names
 result_df = max_import_dt_per_table(table_names)
 result_df.show()
 ```
 
-This function takes a list of table names, iterates through each table, and creates a DataFrame containing the table name, maximum `import_dt` value, and count of records with that maximum value. Please replace the `table_names` list with your actual table names.
+This code attempts to find the correct `import_dt` column case-insensitively and should handle variations in column names more gracefully. Adjust the `table_names` list with your actual table names. If the issue persists, please provide more details about the error for further assistance.
