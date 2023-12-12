@@ -1,10 +1,8 @@
-Certainly! You can achieve this by using PySpark in Databricks. Here's a high-level example of how you could approach this:
+Certainly! If you can't use `spark.read.format("xml")`, you can manually read the XML files from S3 using `spark.read.text` and then process them. Here's an alternative approach:
 
 ```python
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-from xml.etree import ElementTree as ET
-import bz2
+from pyspark.sql.functions import concat_ws
 
 # Initialize Spark session
 spark = SparkSession.builder.appName("MergeXML").getOrCreate()
@@ -14,27 +12,25 @@ input_path = "s3://your-input-path/*.xml"
 output_path = "s3://your-output-path/single.xml.bz2"
 
 # Read XML files into a DataFrame
-df = spark.read.format("xml").option("rowTag", "yourRowTag").load(input_path)
+xml_df = spark.read.text(input_path)
 
-# Convert DataFrame to XML string
-xml_string = df.selectExpr("to_xml_string(struct(*)) as xml").collect()[0].xml
+# Concatenate XML content into a single column
+concatenated_xml = xml_df.groupBy().agg(concat_ws("", xml_df.value).alias("xml_content"))
 
-# Write XML string to a temporary local file
-with open("/tmp/temp.xml", "w") as temp_file:
-    temp_file.write(xml_string)
+# Write concatenated XML content to a temporary local file
+temp_local_path = "/tmp/temp.xml"
+concatenated_xml.write.text(temp_local_path, compression="none", mode="overwrite")
 
 # Compress the temporary file using bz2
-with open("/tmp/temp.xml", "rb") as source, bz2.BZ2File("/tmp/temp.xml.bz2", "wb") as dest:
+with open(temp_local_path, "rb") as source, bz2.BZ2File(temp_local_path + ".bz2", "wb") as dest:
     dest.writelines(source)
 
 # Upload the compressed file to S3
-spark.sparkContext.addFile("file:/tmp/temp.xml.bz2")
-spark.read.text("file:/tmp/temp.xml.bz2").write.text(output_path, compression="bzip2", mode="overwrite")
+spark.sparkContext.addFile("file:" + temp_local_path + ".bz2")
+spark.read.text("file:" + temp_local_path + ".bz2").write.text(output_path, compression="bzip2", mode="overwrite")
 
 # Clean up temporary files
 spark.sparkContext.clearFiles()
 ```
 
-Make sure to replace `"your-input-path"`, `"your-output-path"`, and `"yourRowTag"` with your actual S3 paths and the appropriate XML row tag. This script reads all XML files into a PySpark DataFrame, converts it to a single XML string, writes it to a temporary file, compresses the file using bz2, and then uploads it to the specified S3 output path. Finally, it cleans up the temporary files.
-
-Note: Ensure that your Databricks cluster has the necessary permissions to read from the input S3 path and write to the output S3 path. Adjust the script according to your XML structure and requirements.
+This alternative code reads the XML files into a DataFrame, concatenates the XML content, writes it to a temporary local file, compresses it with bz2, and uploads it to the specified S3 output path. Adjust the script according to your XML structure and requirements.
