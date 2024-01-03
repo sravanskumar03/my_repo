@@ -1,24 +1,17 @@
-Title: Ab Initio ETL Tool Overview
+Subject: Inquiry Regarding XSD Schema Changes in TBF Server
 
-Content:
+Hi Steve,
 
-**Ab Initio:**
-- Ab Initio is a powerful Extract, Transform, Load (ETL) tool designed for data integration, processing, and analysis.
+I hope this message finds you well. We've been conducting regular checks on the XSD schema changes in our development environment, specifically by referencing the paths on the TBF server:
 
-**Advantages:**
-- Scalability: Ab Initio efficiently handles large datasets and scales with growing business needs.
-- Parallel Processing: Utilizes parallelism for faster data processing and improved performance.
-- GUI-Based Development: Offers a user-friendly graphical interface for intuitive ETL job design.
-- Comprehensive Connectivity: Supports diverse data sources and provides seamless integration capabilities.
+- my_path/path1
+- my_path/path2
 
-**Disadvantages:**
-- Cost: Implementation and licensing costs can be relatively high.
-- Learning Curve: Due to its feature-rich environment, there may be a learning curve for new users.
+However, it has come to our attention that no new XSD files have been received since October 2023. We're wondering if there have been any modifications on the TBF server following the upgrade to TBF2 that might be causing this issue.
 
-**Best Use Case:**
-- Ab Initio excels in complex data integration scenarios, especially in large enterprises with diverse data sources and intricate processing requirements.
+Could you please confirm if there have been changes to the server paths? If so, we would appreciate it if you could provide the updated paths so that we can reconfigure our system accordingly for our schema checks.
 
-**Future in Cloud:**
-- With the increasing trend towards cloud computing, Ab Initio is adapting to cloud environments, providing cloud-based solutions for enhanced flexibility and scalability.
+Thank you for your assistance.
 
-*Note: Ensure to elaborate on each point during the presentation to provide a comprehensive understanding of Ab Initio and its relevance in the ETL landscape.*
+Best regards,
+[Your Name]
