@@ -1,17 +1,21 @@
-Subject: Inquiry Regarding XSD Schema Changes in TBF Server
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+from pyspark.sql.types import StringType
 
-Hi Steve,
+# Initialize Spark session
+spark = SparkSession.builder.appName("SearchTeaInXML").getOrCreate()
 
-I hope this message finds you well. We've been conducting regular checks on the XSD schema changes in our development environment, specifically by referencing the paths on the TBF server:
+# Specify the S3 path containing XML files
+s3_path = "s3://your_bucket/your_path/*.xml"
 
-- my_path/path1
-- my_path/path2
+# Read XML files into a DataFrame
+df = spark.read.format("xml").option("rowTag", "root").load(s3_path)
 
-However, it has come to our attention that no new XSD files have been received since October 2023. We're wondering if there have been any modifications on the TBF server following the upgrade to TBF2 that might be causing this issue.
+# Flatten the XML structure and convert to a single column of StringType
+flat_df = df.selectExpr("explode_outer(to_json(struct(*))) as xml_content").select("xml_content").withColumn("xml_content", col("xml_content").cast(StringType()))
 
-Could you please confirm if there have been changes to the server paths? If so, we would appreciate it if you could provide the updated paths so that we can reconfigure our system accordingly for our schema checks.
+# Filter rows containing the word 'tea'
+result_df = flat_df.filter(col("xml_content").contains("tea"))
 
-Thank you for your assistance.
-
-Best regards,
-[Your Name]
+# Show the results
+result_df.show(truncate=False)
