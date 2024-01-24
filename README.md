@@ -20,3 +20,8 @@ result_df = flat_df.filter(col("xml_content").contains("tea"))
 # Show the results
 result_df.show(truncate=False)
 .
+
+Subject: Request for RAM Upgrade on Virtual Machine
+
+Description:
+I am submitting a request to the IT team for an increase in RAM memory allocation on my virtual machine. The business reason behind this request is crucial for our effective collaboration with business partners. We are currently engaged in data validation tasks involving both on-premises and cloud-based resources. To meet business partners' expectations, we need to document detailed comparisons in an Excel sheet for their ease of use. The additional RAM will enhance the virtual machine's performance, ensuring a smoother and more efficient execution of these data validation tasks. Your prompt attention to this matter is highly appreciated.
